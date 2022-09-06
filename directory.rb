@@ -1,57 +1,72 @@
-def interactive_menu
-  students []
-  loop do
-    puts "1. Input the students"
-    puts "2. Show the students"
-    puts "9. Exit"
 
-    selection = gets.chomp
-
-    case selection
-    when "1"
-      students = input_students
-    when "2"
-      print_header
-      print(students)
-      print_footer(students)
-    when "9"
-      exit
-    else
-      puts "I don't know what you mean, try again"
-    end
-  end
-end
-  
+@students []
 
 def input_students
   puts "Please enter the names of the students"
   puts "To finish, just hit return twice"
-  students = []
   name = gets.chomp
   while !name.empty? do
-    students << {name: name, cohort: :cohort}
-    puts "Now we have #{students.count} students"
+    @students << {name: name, cohort: :cohort}
+    puts "Now we have #{@students.count} students"
     name = gets.chomp
   end
-  students
 end 
 
+
+def interactive_menu
+  loop do
+    print_menu
+    process(gets.chomp)
+  end
+end
+
+
+def print_menu
+    puts "1. Input the students"
+    puts "2. Show the students"
+    puts "3. Save the list students.cvs"
+    puts "9. Exit"
+
+    selection = gets.chomp
+
+def show_students
+  print_header
+  print_students_list
+  print_footer
+end
+
+def process(selection)
+  case selection
+  when "1"
+    input_students
+  when "2"
+    show_students
+  when "3"
+    save_students
+  when "9"
+    exit
+  else
+    puts "I don't know what you mean, try again"
+  end
+end
+  
 def print_header
   puts "The students of Villains Academy"
   puts "-------------"
 end
 
-def print(students)
-  students.each do |student|
-    puts "#{student[:name]} (#{student[:cohort]} cohort)"
+def save(students)
+  file = File.open("students.cvs", "W")
+  @students.each do |student|
+    student_data = [student[:name], student[:cohort]]
+    cvs_line = student_data.join(",")
+    file.puts cvs_line
   end
+  file.close
 end
 
 def print_footer(students)
-  puts "Overall, we have #{students.count} great students"
+  puts "Overall, we have #{@students.count} great students"
 end
 
-students =input_students
-print_header
-print(students)
-print_footer(students) 
+interactive_menu 
